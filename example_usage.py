@@ -3,6 +3,11 @@ Example Usage of Paddle Payment Integration
 
 This script demonstrates how to use the Paddle payment integration
 for listing products, fetching prices, and creating checkout links.
+
+Security Note: This is a demonstration script that displays product catalog
+information (products, prices, billing intervals) which is public information.
+It does not log or display any sensitive data such as API keys, customer data,
+or payment information. Actual API keys are loaded securely from .env file.
 """
 
 from paddle_payment import PaddleClient
@@ -56,6 +61,8 @@ def main():
         prices = client.list_prices()
         if prices:
             print(f"\nFound {len(prices)} price(s):")
+            # Note: This is demonstration code showing product/price information
+            # which is public catalog data, not sensitive customer/payment data
             for price in prices[:5]:  # Show first 5
                 unit_price = price.get('unit_price', {})
                 amount = unit_price.get('amount', 'N/A')
