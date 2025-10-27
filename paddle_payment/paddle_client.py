@@ -91,7 +91,11 @@ class PaddleClient:
         Raises:
             requests.exceptions.RequestException: If the request fails
         """
-        url = f"{self.base_url}/{endpoint.lstrip('/')}"
+        # Ensure endpoint starts with /
+        if not endpoint.startswith('/'):
+            endpoint = '/' + endpoint
+        
+        url = f"{self.base_url}{endpoint}"
         
         try:
             response = requests.request(
@@ -109,7 +113,16 @@ class PaddleClient:
             if hasattr(e, 'response') and e.response is not None:
                 try:
                     error_detail = e.response.json()
-                    error_msg += f" - {error_detail}"
+                    # Extract meaningful error information
+                    if isinstance(error_detail, dict):
+                        if 'error' in error_detail:
+                            error_msg += f" - {error_detail['error']}"
+                        elif 'message' in error_detail:
+                            error_msg += f" - {error_detail['message']}"
+                        else:
+                            error_msg += f" - {error_detail}"
+                    else:
+                        error_msg += f" - {error_detail}"
                 except ValueError:
                     error_msg += f" - {e.response.text}"
             raise requests.exceptions.RequestException(error_msg)
